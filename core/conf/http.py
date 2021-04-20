@@ -79,3 +79,17 @@ class HttpResponse:
 
     def __init__(self, resp):
         self.raw_resp = resp
+
+    def get_content_text(self):
+        """
+        Retrieves the response content as a text string.
+        :return:
+        """
+        return self.raw_resp.text
+
+    def get_status_code(self):
+        """
+        Returns the status code of the response.
+        :return:
+        """
+        return self.raw_resp.status_code
