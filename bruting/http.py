@@ -17,7 +17,8 @@ FAILURES = ConcurrentSet()
 STATUSES = set()
 
 
-def parallel_attack(req_template, req_gen, predicate, data_file="test.txt", extractor=identity, threads=2):
+def parallel_attack(req_template, req_gen, predicate, sequence=None, data_file="test.txt", extractor=identity,
+                    threads=2):
     """
     Launches the HTTP brute force attack using the specified number of threads. A list of values is generated from the
     specified file, and they are used to construct HTTP requests which are then sent in parallel. Any response that
@@ -25,16 +26,21 @@ def parallel_attack(req_template, req_gen, predicate, data_file="test.txt", extr
     :param req_template:
     :param req_gen:
     :param predicate:
+    :param sequence:
     :param data_file:
     :param extractor:
     :param threads:
     :return:
     """
-    file = p.join(RESOURCE_DIR, data_file)
-    with open(file, 'r') as df:
-        data_list = df.read().splitlines()
-    data_list = [extractor(v) for v in data_list]
-    data_set = set(data_list)
+    if not sequence:
+        file = p.join(RESOURCE_DIR, data_file)
+        with open(file, 'r') as df:
+            data_list = df.read().splitlines()
+        data_list = [extractor(v) for v in data_list]
+        data_set = set(data_list)
+    else:
+        data_set = set(sequence)
+
     print("Prepare to launch parallel attack with {} orders queued".format(len(data_set)))
     hit_list = []
     attack_order = get_attack_order(req_template, req_gen, predicate, hit_list)
