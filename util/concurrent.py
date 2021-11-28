@@ -9,6 +9,7 @@ class AtomicInteger:
     """
     An integer whose value can be read/changed by multiple threads concurrently with consistency.
     """
+
     _value = 0
     _lock = None
 
@@ -43,6 +44,7 @@ class ConcurrentSet:
     """
     A set that can be modified concurrently safely.
     """
+
     _set = None
     _lock = None
 

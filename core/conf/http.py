@@ -10,6 +10,7 @@ class HttpRequest:
     """
     Simple HTTP request data structure.
     """
+
     host = None
     protocol = None
     method = None
@@ -20,8 +21,18 @@ class HttpRequest:
     body = None
     files = None
 
-    def __init__(self, host="localhost", protocol=Protocol.HTTP, method=HttpMethod.GET, path=None, headers=None,
-                 cookies=None, params=None, body=None, files=None):
+    def __init__(
+        self,
+        host="localhost",
+        protocol=Protocol.HTTP,
+        method=HttpMethod.GET,
+        path=None,
+        headers=None,
+        cookies=None,
+        params=None,
+        body=None,
+        files=None,
+    ):
         self.host = host
         self.protocol = protocol
         self.method = method
@@ -37,8 +48,17 @@ class HttpRequest:
         Creates an shallow copy of this object.
         :return:
         """
-        return HttpRequest(self.host, self.protocol, self.method, self.path, self.headers, self.cookies, self.params,
-                           self.body, self.files)
+        return HttpRequest(
+            self.host,
+            self.protocol,
+            self.method,
+            self.path,
+            self.headers,
+            self.cookies,
+            self.params,
+            self.body,
+            self.files,
+        )
 
     def get_method(self):
         """
@@ -75,6 +95,7 @@ class HttpResponse:
     """
     HTTP response object that primarily serves as a parser/handler for "requests.Response".
     """
+
     raw_resp = None
 
     def __init__(self, resp):

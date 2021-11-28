@@ -17,5 +17,13 @@ def send_one(req):
     url = req.get_url()
 
     return HttpResponse(
-        requests.request(method, url, params=req.params, data=req.body, headers=req.headers, cookies=req.cookies,
-                         files=req.files))
+        requests.request(
+            method,
+            url,
+            params=req.params,
+            data=req.body,
+            headers=req.headers,
+            cookies=req.cookies,
+            files=req.files,
+        )
+    )
